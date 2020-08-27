@@ -23,7 +23,7 @@ def do_onnx_inference(onnx_path, input):
 
 input_resolution_yolov3_HW = (320, 320)
 preprocessor = data_process.PreprocessYOLO(input_resolution_yolov3_HW)
-image_raw, image_preprocessed = preprocessor.process('./lights.jpg')
+image_raw, image_preprocessed = preprocessor.process('./lishui.png')
 shape_orig_WH = image_raw.size
 
 model_input = {'000_net':image_preprocessed}
