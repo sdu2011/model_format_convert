@@ -1,0 +1,2 @@
+#注意把yolov3_trafficlights_320.cfg中batch_size改为1
+python darknet2onnx.py yolov3_trafficlights_320.cfg yolov3_trafficlights_320_last.weights trafficlights2.names --input_size=320
