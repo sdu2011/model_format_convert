@@ -1,4 +1,4 @@
-import cv2
+import cv2 as cv
 import math
 from PIL import Image
 import numpy as np
@@ -14,12 +14,12 @@ def load_label_categories(label_file_path):
     return categories
 
 
-LABEL_FILE_PATH = 'trafficlights2.names'
+LABEL_FILE_PATH = './data/lishui_0902/trafficlights2.names'
 ALL_CATEGORIES = load_label_categories(LABEL_FILE_PATH)
 
 # 确定有80个类别:
 CATEGORY_NUM = len(ALL_CATEGORIES)
-assert CATEGORY_NUM == 14
+assert CATEGORY_NUM == 2
 
 
 class PreprocessYOLO(object):
@@ -42,6 +42,7 @@ class PreprocessYOLO(object):
         input_image_path -- string path of the image to be loaded
         """
         image_raw, image_resized = self._load_and_resize(input_image_path)
+        # cv.imwrite("/home/sc/keepgoing/model_format_convert/yolov3/py_preprocess_light.png",cv.cvtColor(image_resized,cv.COLOR_RGB2BGR))
         image_preprocessed = self._shuffle_and_normalize(image_resized)
         return image_raw, image_preprocessed
 
@@ -52,13 +53,14 @@ class PreprocessYOLO(object):
         input_image_path -- string path of the image to be loaded
         """
 
-        image_raw = Image.open(input_image_path)
+        image_raw = Image.open(input_image_path) #PIL默认是rgb order
 
         new_resolution = (
             self.yolo_input_resolution[1],
             self.yolo_input_resolution[0])
         image_resized = image_raw.resize(
             new_resolution, resample=Image.BICUBIC)
+        
         image_resized = np.array(image_resized, dtype=np.float32, order='C')
         return image_raw, image_resized
 

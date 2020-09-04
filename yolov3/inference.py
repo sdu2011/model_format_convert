@@ -1,6 +1,9 @@
+#encoding=utf-8
 import onnxruntime as ort
 import data_process
-from data_process  import draw_bboxes,ALL_CATEGORIES
+from data_process import draw_bboxes, ALL_CATEGORIES
+import cv2 as cv
+
 
 def main():
     onnx_file = './yolov3.onnx'
@@ -20,16 +23,25 @@ def do_onnx_inference(onnx_path, input):
 
     return outputs
 
-
-input_resolution_yolov3_HW = (320, 320)
+img_path='./data/lishui_0902/lishui_tl.png'
+input_resolution_yolov3_HW = (416, 416)
 preprocessor = data_process.PreprocessYOLO(input_resolution_yolov3_HW)
+<<<<<<< HEAD
+image_raw, image_preprocessed = preprocessor.process(img_path)
+x, y = 169, 196
+for c in range(3):
+    print(255*image_preprocessed[0][c][y][x])
+
+=======
 image_raw, image_preprocessed = preprocessor.process('./lishui.png')
+>>>>>>> 676f4e3184c226c79cdb06e618dc3ee6096187f6
 shape_orig_WH = image_raw.size
 
 model_input = {'000_net':image_preprocessed}
 model_outputs=do_onnx_inference('./yolov3.onnx',model_input)
-postprocessor_args = {"yolo_masks": [(6, 7, 8), (3, 4, 5), (0, 1, 2)],                    
-                        "yolo_anchors": [(10, 13), (16, 30), (33, 23), (30, 61), (62, 45), 
+
+postprocessor_args = {"yolo_masks": [(6, 7, 8), (3, 4, 5), (0, 1, 2)],
+                        "yolo_anchors": [(10, 13), (16, 30), (33, 23), (30, 61), (62, 45),
                                         (59, 119), (116, 90), (156, 198), (373, 326)],
                         "obj_threshold": 0.6,         # 对象覆盖的阈值，[0,1]之间
                         "nms_threshold": 0.5,       # nms的阈值，[0,1]之间
