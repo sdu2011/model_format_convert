@@ -1,0 +1,2 @@
+# 使用说明
+python darknet2onnx_test.py ./data/lishui_0902/yolov3-giou-lishui0902.cfg ./data/lishui_0902/yolov3-giou-lishui0902_last.weights ./data/lishui_0902/trafficlights2.names --input_size 416 -o data/lishui_0902/yolov3.onnx

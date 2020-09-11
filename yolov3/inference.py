@@ -28,7 +28,6 @@ x, y = 169, 196
 for c in range(3):
     print(255*image_preprocessed[0][c][y][x])
 
-image_raw, image_preprocessed = preprocessor.process('./lishui.png')
 shape_orig_WH = image_raw.size
 
 model_input = {'000_net': image_preprocessed}
