@@ -438,11 +438,13 @@ class GraphBuilderONNX(object):
                 self.major_node_specs.append(major_node_specs)
         outputs = list()
         for tensor_name in self.output_tensors.keys():
+            # print(tensor_name)
             output_dims = [self.batch_size, ] + \
                 self.output_tensors[tensor_name]
             output_tensor = helper.make_tensor_value_info(
                 tensor_name, TensorProto.FLOAT, output_dims)
             outputs.append(output_tensor)
+        print('outputs:{}'.format(outputs))
         inputs = [self.input_tensor]
         weight_loader = WeightLoader(weights_file_path)
         initializer = list()
@@ -461,15 +463,22 @@ class GraphBuilderONNX(object):
                 initializer.extend(initializer_layer)
                 inputs.extend(inputs_layer)
         del weight_loader
+
+        # print("inputs are:{}".format(inputs))
+        # print("outputs are:{}".format(outputs))
+        # print("nodes are:{}".format(self._nodes))
+        # print("initializer are:{}".format(initializer))
+        # create GraphProto
         self.graph_def = helper.make_graph(
-            nodes=self._nodes,
-            name='YOLOv3-608',
+            nodes=self._nodes, #[list of NodeProto]
+            name='YOLOv3-416',
             inputs=inputs,
             outputs=outputs,
             initializer=initializer
         )
         if verbose:
-            print(helper.printable_graph(self.graph_def))
+            # print(helper.printable_graph(self.graph_def))
+            pass
         model_def = helper.make_model(self.graph_def,
                                       producer_name='NVIDIA TensorRT sample')
         return model_def
@@ -484,6 +493,7 @@ class GraphBuilderONNX(object):
         layer_dict -- a layer parameter dictionary (one element of layer_configs)
         """
         layer_type = layer_dict['type']
+        print('making node:{}:{}'.format(layer_name,layer_type))
         if self.input_tensor is None:
             if layer_type == 'net':
                 major_node_output_name, major_node_output_channels = self._make_input_tensor(
@@ -504,6 +514,7 @@ class GraphBuilderONNX(object):
                     node_creators[layer_type](layer_name, layer_dict)
                 major_node_specs = MajorNodeSpecs(major_node_output_name,
                                                   major_node_output_channels)
+                print('node output:{}:[{}]'.format(major_node_output_name,major_node_output_channels))
             else:
                 print(
                     'Layer of type %s not supported, skipping ONNX node generation.' %

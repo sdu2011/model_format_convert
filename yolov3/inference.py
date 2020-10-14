@@ -19,7 +19,6 @@ def do_onnx_inference(onnx_path, input):
 
     return outputs
 
-
 img_path = './data/lishui_0902/lishui_tl.png'
 input_resolution_yolov3_HW = (416, 416)
 preprocessor = data_process.PreprocessYOLO(input_resolution_yolov3_HW)
@@ -31,6 +30,7 @@ for c in range(3):
 shape_orig_WH = image_raw.size
 
 model_input = {'000_net': image_preprocessed}
+print(type(image_preprocessed))
 model_outputs = do_onnx_inference('./yolov3.onnx', model_input)
 
 postprocessor_args = {"yolo_masks": [(6, 7, 8), (3, 4, 5), (0, 1, 2)],
