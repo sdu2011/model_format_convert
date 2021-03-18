@@ -19,19 +19,20 @@ def do_onnx_inference(onnx_path, input):
 
     return outputs
 
-img_path = './data/lishui_0902/lishui_tl.png'
+img_path = './tools/intensity_image/frame0163.jpg'
 input_resolution_yolov3_HW = (416, 416)
 preprocessor = data_process.PreprocessYOLO(input_resolution_yolov3_HW)
 image_raw, image_preprocessed = preprocessor.process(img_path)
-x, y = 169, 196
-for c in range(3):
-    print(255*image_preprocessed[0][c][y][x])
+# x, y = 169, 196
+# for c in range(3):
+#     print(255*image_preprocessed[0][c][y][x])
 
 shape_orig_WH = image_raw.size
 
 model_input = {'000_net': image_preprocessed}
 print(type(image_preprocessed))
 model_outputs = do_onnx_inference('./yolov3.onnx', model_input)
+print('inference done.......................')
 
 postprocessor_args = {"yolo_masks": [(6, 7, 8), (3, 4, 5), (0, 1, 2)],
                       "yolo_anchors": [(10, 13), (16, 30), (33, 23), (30, 61), (62, 45),
@@ -42,10 +43,13 @@ postprocessor_args = {"yolo_masks": [(6, 7, 8), (3, 4, 5), (0, 1, 2)],
 
 postprocessor = data_process.PostprocessYOLO(**postprocessor_args)
 boxes, classes, scores = postprocessor.process(model_outputs, (shape_orig_WH))
-obj_detected_img = draw_bboxes(
-    image_raw, boxes, scores, classes, ALL_CATEGORIES)
-output_image_path = 'lights_bboxes.png'
-obj_detected_img.save(output_image_path, 'PNG')
+print('post process done...................')
 
-print('Saved image with bounding boxes of detected objects to {}.'.format(
-    output_image_path))
+if boxes:
+    obj_detected_img = draw_bboxes(
+        image_raw, boxes, scores, classes, ALL_CATEGORIES)
+    output_image_path = img_path.replace('.jpg','_post.png')
+    obj_detected_img.save(output_image_path, 'PNG')
+
+    print('Saved image with bounding boxes of detected objects to {}.'.format(
+        output_image_path))
